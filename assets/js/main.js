@@ -78,7 +78,7 @@ const WORKER_CODE = `
         const baseUrl = window.location.origin;
         
         const desktopFrames = generateFrames(
-            `${baseUrl}/assets/images/hero-desktop-webp/HERO_{index}.webp`,
+            `${baseUrl}/assets/images/hero-desktop-webp/HERO_{index}_converted.webp`,
             301,
             1  
         );
