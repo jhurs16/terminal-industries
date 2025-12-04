@@ -62,6 +62,13 @@ const WORKER_CODE = `
             document.getElementById('title3')
         ];
 
+        // HIDE TEXT INITIALLY TO PREVENT FLASH
+        titles.forEach(title => {
+            if (title) {
+                gsap.set(title, { opacity: 0 });
+            }
+        });
+
         // Frame configuration
         let images = [];
         let currentFrame = 0;
@@ -132,12 +139,25 @@ const WORKER_CODE = `
 
         // Load images from blobs
         async function loadImages(blobs) {
+            let loadedCount = 0;
+            const totalImages = blobs.length;
+            
             const loadPromises = blobs.map((item, index) => {
                 return new Promise((resolve) => {
                     const img = new Image();
                     img.onload = () => {
                         images[index] = img;
+                        loadedCount++;
+                        
+                        // Update loading text for image processing
+                        const percentage = Math.round((loadedCount / totalImages) * 100);
+                        loading.textContent = `Processing images... ${loadedCount}/${totalImages} (${percentage}%)`;
+                        
                         resolve();
+                    };
+                    img.onerror = () => {
+                        console.error(`Failed to load image ${index}`);
+                        resolve(); // Still resolve to not block other images
                     };
                     img.src = URL.createObjectURL(item.blob);
                 });
