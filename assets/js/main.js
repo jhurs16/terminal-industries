@@ -6,16 +6,31 @@ const WORKER_CODE = `
                 case "frames":
                     {
                         const {frames: e} = s.data.payload;
-                        const t = await Promise.all(e.map(async a => ({
-                            blob: await (await fetch(a)).blob(),
-                            frame: a
-                        })));
+                        let loaded = 0;
+                        
+                        const blobs = [];
+                        for (const frame of e) {
+                            const blob = await (await fetch(frame)).blob();
+                            blobs.push({ blob, frame });
+                            loaded++;
+                            
+                            // Send progress update
+                            self.postMessage({
+                                type: "progress",
+                                payload: {
+                                    loaded,
+                                    total: e.length
+                                }
+                            });
+                        }
+                        
+                        // Send complete blobs
                         self.postMessage({
                             type: "blobs",
                             payload: {
-                                blobs: t
+                                blobs: blobs
                             }
-                        })
+                        });
                     }
                 }
             })
@@ -28,7 +43,6 @@ const WORKER_CODE = `
         // ============================================
         // PREVENT SCROLLING UNTIL LOADED
         // ============================================
-        // Disable scroll initially
         document.body.style.overflow = 'hidden';
         document.documentElement.style.overflow = 'hidden';
 
@@ -98,8 +112,19 @@ const WORKER_CODE = `
         const blob = new Blob([WORKER_CODE], { type: 'application/javascript' });
         const worker = new Worker(URL.createObjectURL(blob));
 
+        // Update loading text with progress
+        function updateLoadingProgress(loaded, total) {
+            const percentage = Math.round((loaded / total) * 100);
+            loading.textContent = `Loading frames... ${loaded}/${total} (${percentage}%)`;
+        }
+
         worker.onmessage = function(e) {
-            if (e.data.type === 'blobs') {
+            if (e.data.type === 'progress') {
+                // Update progress display
+                const { loaded, total } = e.data.payload;
+                updateLoadingProgress(loaded, total);
+            }
+            else if (e.data.type === 'blobs') {
                 const blobs = e.data.payload.blobs;
                 loadImages(blobs);
             }
@@ -164,13 +189,11 @@ const WORKER_CODE = `
             }
         }
 
-        // Update text animation based on progress - FIXED TIMING
+        // Update text animation based on progress
         function updateTextAnimation(progress) {
-            // Adjust these values to control when text animation starts and ends
-            const textStartProgress = 0.1;  // Text starts at 10% scroll
-            const textEndProgress = 0.9;    // Text ends at 90% scroll
+            const textStartProgress = 0.1;
+            const textEndProgress = 0.9;
             
-            // Map scroll progress to text animation progress
             const textProgress = Math.max(0, Math.min(1, 
                 (progress - textStartProgress) / (textEndProgress - textStartProgress)
             ));
