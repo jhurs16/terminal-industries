@@ -41,9 +41,6 @@ const WORKER_CODE = `
             document.getElementById('title3')
         ];
 
-        // DISABLE SCROLLING DURING LOAD
-        document.body.style.overflow = 'hidden';
-
         // Frame configuration
         let images = [];
         let currentFrame = 0;
@@ -65,23 +62,38 @@ const WORKER_CODE = `
             }
         });
 
+        // Generate frame URLs helper
+        // function generateFrames(urlTemplate, count, startIndex = 0) {
+        //     const urls = [];
+        //     for (let i = startIndex; i < startIndex + count; i++) {
+        //         urls.push(urlTemplate.replace('{index}', i));
+        //     }
+        //     return urls;
+        // }
         function generateFrames(urlTemplate, count, startIndex = 0) {
             const urls = [];
             for (let i = startIndex; i < startIndex + count; i++) {
+                // Pad the number to 4 digits with leading zeros
                 const paddedIndex = i.toString().padStart(4, '0');
                 urls.push(urlTemplate.replace('{index}', paddedIndex));
             }
             return urls;
         }
+        // Get appropriate frames based on device
+        // const desktopFrames = generateFrames(
+        //     "https://terminal-industries.com/static/frames/home/desktop/webp/hero_anim_desktop_60_{index}.webp",
+        //     410,
+        //     0
+        // );
 
-        // Convert relative paths to absolute URLs for the worker
+        // changes
         const baseUrl = window.location.origin;
-        
         const desktopFrames = generateFrames(
             `${baseUrl}/assets/images/hero-desktop-webp/HERO_{index}_converted.webp`,
             301,
             1  
         );
+       
 
         const mobileFrames = generateFrames(
             `${baseUrl}/assets/images/hero-mobile-webp/HERO%20MW_{index}_converted.webp`,
@@ -91,12 +103,6 @@ const WORKER_CODE = `
 
         const frameURLs = isDesktop ? desktopFrames : mobileFrames;
         const FRAME_COUNT = frameURLs.length;
-
-        // UPDATE LOADING TEXT WITH COUNTER
-        function updateLoadingText(loaded, total) {
-            const percentage = Math.round((loaded / total) * 100);
-            loading.textContent = `Loading frames... ${loaded}/${total} (${percentage}%)`;
-        }
 
         // Initialize Web Worker
         const blob = new Blob([WORKER_CODE], { type: 'application/javascript' });
@@ -109,20 +115,13 @@ const WORKER_CODE = `
             }
         };
 
-        // Load images from blobs with progress tracking
+        // Load images from blobs
         async function loadImages(blobs) {
-            let loadedCount = 0;
-            const total = blobs.length;
-            
-            updateLoadingText(0, total);
-
             const loadPromises = blobs.map((item, index) => {
                 return new Promise((resolve) => {
                     const img = new Image();
                     img.onload = () => {
                         images[index] = img;
-                        loadedCount++;
-                        updateLoadingText(loadedCount, total);
                         resolve();
                     };
                     img.src = URL.createObjectURL(item.blob);
@@ -130,12 +129,6 @@ const WORKER_CODE = `
             });
 
             await Promise.all(loadPromises);
-            
-            // SCROLL TO TOP AFTER LOADING
-            window.scrollTo(0, 0);
-            
-            // RE-ENABLE SCROLLING
-            document.body.style.overflow = '';
             
             // Hide loading with GSAP
             gsap.to(loading, {
@@ -159,9 +152,6 @@ const WORKER_CODE = `
             payload: { frames: frameURLs }
         });
 
-        // HIDE TEXT INITIALLY TO PREVENT FLASH
-        gsap.set(titles, { opacity: 0 });
-
         // Split text into characters using GSAP SplitText
         const titleSplits = titles.map(title => {
             return new SplitText(title, {
@@ -180,10 +170,9 @@ const WORKER_CODE = `
             }
         }
 
-        // Update text animation based on progress - ADJUSTED TIMING
+        // Update text animation based on progress
         function updateTextAnimation(progress) {
-            // Adjust the offset to start earlier so animation completes before scroll ends
-            const adjustedProgress = Math.min(progress - 0.01, 0.99); // Start at 1% and cap at 99%
+            const adjustedProgress = progress - 0.03;
             const titleIndex = Math.floor(adjustedProgress * 3);
             const titleProgress = (adjustedProgress * 3) - titleIndex;
 
@@ -296,22 +285,26 @@ const WORKER_CODE = `
             if (!element || !trigger) return;
             
             const {
-                startColor = "#abff02",
-                endColor = "#052424"
+                startColor = "#abff02",    // Lime green
+                endColor = "#052424"       // Dark green
             } = options;
             
+            // Split text into words and characters (matching their implementation)
             const split = new SplitText(element, {
                 type: "words, chars",
                 tag: "span",
                 charsClass: "--char"
             });
             
+            // Get characters inside <strong> (matching their selector)
             const chars = Array.from(element.querySelectorAll("#animated-text strong .--char"));
             
             if (!chars.length) return;
             
+            // Get ALL characters for final state
             const allChars = Array.from(element.querySelectorAll("#animated-text .--char"));
             
+            // Create timeline with ScrollTrigger (exact match to their code)
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: trigger,
@@ -320,18 +313,21 @@ const WORKER_CODE = `
                 }
             });
             
+            // First animation: light gray → lime green
             tl.to(chars, {
                 color: startColor,
                 duration: 0.4,
                 stagger: 0.05,
                 ease: "power2.inOut"
             }, 0)
+            // Second animation: lime green → dark green (overlaps at 0.25s)
             .to(chars, {
                 color: endColor,
                 duration: 0.5,
                 stagger: 0.05,
                 ease: "power2.inOut"
             }, 0.25)
+            // Final state: all text becomes black
             .to(allChars, {
                 color: "#052424",
                 duration: 0.3,
