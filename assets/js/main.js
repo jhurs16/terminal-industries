@@ -75,13 +75,13 @@ const WORKER_CODE = `
         }
 
         const desktopFrames = generateFrames(
-            "https://terminal-industries-clone.vercel.app/assets/images/hero-desktop-webp/HERO_{index}.webp",
+            "./assets/images/hero-desktop-webp/HERO_{index}.webp",
             301,
             1  
         );
 
         const mobileFrames = generateFrames(
-            "https://terminal-industries-clone.vercel.app/assets/images/hero-mobile-webp/HERO%20MW_{index}_converted.webp",
+            "./assets/images/hero-mobile-webp/HERO%20MW_{index}_converted.webp",
             301,
             1
         );
