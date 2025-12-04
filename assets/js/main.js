@@ -74,14 +74,17 @@ const WORKER_CODE = `
             return urls;
         }
 
+        // Convert relative paths to absolute URLs for the worker
+        const baseUrl = window.location.origin;
+        
         const desktopFrames = generateFrames(
-            "./assets/images/hero-desktop-webp/HERO_{index}.webp",
+            `${baseUrl}/assets/images/hero-desktop-webp/HERO_{index}.webp`,
             301,
             1  
         );
 
         const mobileFrames = generateFrames(
-            "./assets/images/hero-mobile-webp/HERO%20MW_{index}_converted.webp",
+            `${baseUrl}/assets/images/hero-mobile-webp/HERO%20MW_{index}_converted.webp`,
             301,
             1
         );
