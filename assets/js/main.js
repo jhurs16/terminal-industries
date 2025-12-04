@@ -26,6 +26,13 @@ const WORKER_CODE = `
         gsap.registerPlugin(ScrollTrigger, SplitText);
 
         // ============================================
+        // PREVENT SCROLLING UNTIL LOADED
+        // ============================================
+        // Disable scroll initially
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+
+        // ============================================
         // MAIN APP
         // ============================================
         const canvas = document.getElementById('canvas');
@@ -57,41 +64,26 @@ const WORKER_CODE = `
             const wasDesktop = isDesktop;
             isDesktop = window.innerWidth >= 1024;
             if (wasDesktop !== isDesktop) {
-                // Reload frames if device type changed
                 location.reload();
             }
         });
 
         // Generate frame URLs helper
-        // function generateFrames(urlTemplate, count, startIndex = 0) {
-        //     const urls = [];
-        //     for (let i = startIndex; i < startIndex + count; i++) {
-        //         urls.push(urlTemplate.replace('{index}', i));
-        //     }
-        //     return urls;
-        // }
         function generateFrames(urlTemplate, count, startIndex = 0) {
             const urls = [];
             for (let i = startIndex; i < startIndex + count; i++) {
-                // Pad the number to 4 digits with leading zeros
                 const paddedIndex = i.toString().padStart(4, '0');
                 urls.push(urlTemplate.replace('{index}', paddedIndex));
             }
             return urls;
         }
+
         // Get appropriate frames based on device
-        // const desktopFrames = generateFrames(
-        //     "https://terminal-industries.com/static/frames/home/desktop/webp/hero_anim_desktop_60_{index}.webp",
-        //     410,
-        //     0
-        // );
-        // changes
         const desktopFrames = generateFrames(
             "https://terminal-industries-clone.vercel.app/assets/images/hero-desktop-webp/HERO_{index}.webp",
             301,
             1  
         );
-       
 
         const mobileFrames = generateFrames(
             "https://terminal-industries-clone.vercel.app/assets/images/hero-mobile-webp/HERO%20MW_{index}_converted.webp",
@@ -134,6 +126,10 @@ const WORKER_CODE = `
                 duration: 0.5,
                 onComplete: () => {
                     loading.style.display = 'none';
+                    
+                    // RE-ENABLE SCROLLING AFTER LOAD
+                    document.body.style.overflow = '';
+                    document.documentElement.style.overflow = '';
                 }
             });
             
@@ -168,11 +164,19 @@ const WORKER_CODE = `
             }
         }
 
-        // Update text animation based on progress
+        // Update text animation based on progress - FIXED TIMING
         function updateTextAnimation(progress) {
-            const adjustedProgress = progress - 0.03;
-            const titleIndex = Math.floor(adjustedProgress * 3);
-            const titleProgress = (adjustedProgress * 3) - titleIndex;
+            // Adjust these values to control when text animation starts and ends
+            const textStartProgress = 0.1;  // Text starts at 10% scroll
+            const textEndProgress = 0.9;    // Text ends at 90% scroll
+            
+            // Map scroll progress to text animation progress
+            const textProgress = Math.max(0, Math.min(1, 
+                (progress - textStartProgress) / (textEndProgress - textStartProgress)
+            ));
+            
+            const titleIndex = Math.floor(textProgress * 3);
+            const titleProgress = (textProgress * 3) - titleIndex;
 
             // Reset all characters
             titleChars.forEach((chars, index) => {
@@ -196,11 +200,9 @@ const WORKER_CODE = `
                     const charRatio = i / chars.length;
                     const nextCharRatio = (i + 1) / chars.length;
                     
-                    // Fade in calculation
                     const fadeInCharProgress = (fadeInProgress - charRatio) / (nextCharRatio - charRatio);
                     const fadeInEased = gsap.parseEase('power2.out')(Math.max(0, Math.min(1, fadeInCharProgress)));
                     
-                    // Fade out calculation
                     const fadeOutCharProgress = (fadeOutProgress - charRatio) / (nextCharRatio - charRatio);
                     const fadeOutEased = gsap.parseEase('power2.in')(Math.max(0, Math.min(1, fadeOutCharProgress)));
                     
@@ -274,7 +276,6 @@ const WORKER_CODE = `
 
         animateIndicator();
 
-
         // 2nd section 
         function animateTextOnScroll(targetSelector, triggerSelector, options = {}) {
             const element = document.querySelector(targetSelector);
@@ -283,26 +284,22 @@ const WORKER_CODE = `
             if (!element || !trigger) return;
             
             const {
-                startColor = "#abff02",    // Lime green
-                endColor = "#052424"       // Dark green
+                startColor = "#abff02",
+                endColor = "#052424"
             } = options;
             
-            // Split text into words and characters (matching their implementation)
             const split = new SplitText(element, {
                 type: "words, chars",
                 tag: "span",
                 charsClass: "--char"
             });
             
-            // Get characters inside <strong> (matching their selector)
             const chars = Array.from(element.querySelectorAll("#animated-text strong .--char"));
             
             if (!chars.length) return;
             
-            // Get ALL characters for final state
             const allChars = Array.from(element.querySelectorAll("#animated-text .--char"));
             
-            // Create timeline with ScrollTrigger (exact match to their code)
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: trigger,
@@ -311,21 +308,18 @@ const WORKER_CODE = `
                 }
             });
             
-            // First animation: light gray → lime green
             tl.to(chars, {
                 color: startColor,
                 duration: 0.4,
                 stagger: 0.05,
                 ease: "power2.inOut"
             }, 0)
-            // Second animation: lime green → dark green (overlaps at 0.25s)
             .to(chars, {
                 color: endColor,
                 duration: 0.5,
                 stagger: 0.05,
                 ease: "power2.inOut"
             }, 0.25)
-            // Final state: all text becomes black
             .to(allChars, {
                 color: "#052424",
                 duration: 0.3,
