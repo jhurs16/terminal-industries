@@ -1,0 +1,215 @@
+* {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #000;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        /* Main Container */
+        .video-carousel {
+            background-color: #000;
+            overflow: clip;
+            position: relative;
+        }
+
+        .wrapper {
+            position: relative;
+        }
+
+        /* Creates the scroll height */
+        .content-sizer {
+            height: 300vh;
+        }
+
+        /* Video Sequence Container */
+        .video-sequence-scroll {
+            position: relative;
+        }
+
+        .video-sequence-background {
+            height: 100%;
+            left: 0;
+            position: absolute;
+            top: 0;
+            width: 100%;
+            pointer-events: none;
+        }
+
+        .sequence-background-wrapper {
+            background: #000;
+            height: 100vh;
+            left: 0;
+            position: sticky;
+            top: 0;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Scroll Content - Text Overlay */
+        .homepage-scroll-content {
+            height: 100%;
+            left: 0;
+            pointer-events: none;
+            position: absolute;
+            top: 0;
+            touch-action: none;
+            user-select: none;
+            width: 100%;
+            z-index: 10;
+        }
+
+        .scroll-content {
+            align-items: flex-end;
+            display: flex;
+            height: 100vh;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            justify-content: center;
+            padding-bottom: 3.75rem;
+            position: sticky;
+            z-index: 2;
+        }
+
+        .title {
+            color: #fff;
+            position: absolute;
+            text-align: center;
+            font-size: clamp(2rem, 5vw, 4rem);
+            font-weight: 700;
+            max-width: 90%;
+            line-height: 1.2;
+        }
+
+        .title .char {
+            display: inline-block;
+            opacity: 0;
+            transition: opacity 0.1s, color 0.3s;
+            will-change: opacity, color;
+        }
+
+        /* Mobile Scroll Indicator */
+        .scroll-indicator-mobile {
+            align-items: center;
+            bottom: 2.25rem;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5625rem;
+            justify-content: center;
+            left: 50%;
+            position: fixed;
+            transform: translate(-50%);
+            z-index: 20;
+            transition: opacity 0.3s;
+        }
+
+        .scroll-indicator-mobile p {
+            font-family: monospace;
+            font-size: 0.6875rem;
+            font-weight: 600;
+            letter-spacing: 0.103125rem;
+            line-height: 1;
+            text-transform: uppercase;
+        }
+
+        .indicator {
+            background: rgba(204, 204, 204, 0.27);
+            border-radius: 1px;
+            height: 1.6875rem;
+            overflow: hidden;
+            position: relative;
+            width: 0.125rem;
+        }
+
+        .indicator .inner {
+            background-color: #abff02;
+            border-radius: 1px;
+            height: 0.75rem;
+            position: absolute;
+            width: 100%;
+            will-change: transform;
+        }
+
+        @media (min-width: 1024px) {
+            .scroll-content {
+                padding-bottom: 8.4375rem;
+            }
+
+            .title {
+                max-width: 62.5vw;
+            }
+
+            .scroll-indicator-mobile {
+                display: none;
+            }
+        }
+
+        /* Loading State */
+        .loading {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #abff02;
+            font-size: 1.5rem;
+            z-index: 100;
+        }
+
+
+        /* header animated 2nd section */
+        section.header-animated {
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px;
+        background: #f5f5f5;
+    }
+    
+    
+    
+    #animated-text {
+        /* font-size: clamp(32px, 6vw, 72px); */
+        font-size: max(4.375rem,min(4.688vw,120px));
+        line-height: 1.2;
+        font-weight: 400;
+        max-width:  750px;
+        text-align: center;
+        margin: 0 auto;
+        color: #052424;
+        word-wrap: normal;
+    }
+    
+    #animated-text .word {
+        display: inline-block;
+        margin-right: 0.3em;
+    }
+    
+    #animated-text .--char {
+        display: inline-block;
+    }
+    
+    #animated-text strong {
+        font-weight: 400;
+    }
+    
+    /* Default state: very light gray */
+    #animated-text strong .--char {
+        color: #d8d8d8;
+    }

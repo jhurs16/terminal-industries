@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Terminal Industries Clone</title>
+    <link rel="stylesheet" href="./assets/css/style.css">
+</head>
+<body>
+    <div class="loading" id="loading">Loading frames...</div>
+
+    <section class="video-carousel">
+        <div class="wrapper">
+            <div class="video-sequence-scroll">
+                <!-- Mobile Scroll Indicator -->
+                <div class="scroll-indicator-mobile" id="scrollIndicator">
+                    <span class="indicator">
+                        <div class="inner" id="indicatorInner"></div>
+                    </span>
+                    <p>SCROLL TO EXPLORE</p>
+                </div>
+
+                <!-- Video Background -->
+                <div class="video-sequence-background">
+                    <div class="sequence-background-wrapper">
+                        <canvas id="canvas"></canvas>
+                    </div>
+                </div>
+
+                <!-- Scroll Sizer -->
+                <div class="content">
+                    <div class="content-sizer"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Text Content -->
+        <div class="homepage-scroll-content">
+            <div class="scroll-content">
+                <h2 class="title" id="title1">We have reinvented the future of logistics</h2>
+                <h2 class="title" id="title2">through the yard.</h2>
+                <h2 class="title" id="title3">Moving the world by making goods flow.</h2>
+            </div>
+        </div>
+    </section>
+
+    <section id="trigger-section" class="header-animated">
+        <h1 id="animated-text">
+            Imagine the yard as an <strong><br>intelligent bridge</strong> seamlessly connecting highway to warehouse.
+        </h1>
+    </section>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/SplitText.min.js"></script>
+    <script src="./assets/js/main.js"></script>
+    
+</body>
+</html>
