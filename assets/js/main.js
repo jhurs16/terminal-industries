@@ -85,7 +85,7 @@ const WORKER_CODE = `
         //     410,
         //     0
         // );
-        
+        // changes
         const desktopFrames = generateFrames(
             "https://terminal-industries-clone.vercel.app/assets/images/hero-desktop-webp/HERO_{index}.webp",
             301,
