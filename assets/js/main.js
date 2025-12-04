@@ -172,9 +172,11 @@ const WORKER_CODE = `
 
         // Update text animation based on progress
         function updateTextAnimation(progress) {
-            const adjustedProgress = progress - 0.03;
-            const titleIndex = Math.floor(adjustedProgress * 3);
-            const titleProgress = (adjustedProgress * 3) - titleIndex;
+            // const adjustedProgress = progress - 0.03;
+            // const titleIndex = Math.floor(adjustedProgress * 3);
+            // const titleProgress = (adjustedProgress * 3) - titleIndex;
+            const titleIndex = Math.floor(progress * 3);
+            const titleProgress = (progress * 3) - titleIndex;
 
             // Reset all characters
             titleChars.forEach((chars, index) => {
