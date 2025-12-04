@@ -6,31 +6,16 @@ const WORKER_CODE = `
                 case "frames":
                     {
                         const {frames: e} = s.data.payload;
-                        let loaded = 0;
-                        
-                        const blobs = [];
-                        for (const frame of e) {
-                            const blob = await (await fetch(frame)).blob();
-                            blobs.push({ blob, frame });
-                            loaded++;
-                            
-                            // Send progress update
-                            self.postMessage({
-                                type: "progress",
-                                payload: {
-                                    loaded,
-                                    total: e.length
-                                }
-                            });
-                        }
-                        
-                        // Send complete blobs
+                        const t = await Promise.all(e.map(async a => ({
+                            blob: await (await fetch(a)).blob(),
+                            frame: a
+                        })));
                         self.postMessage({
                             type: "blobs",
                             payload: {
-                                blobs: blobs
+                                blobs: t
                             }
-                        });
+                        })
                     }
                 }
             })
@@ -39,12 +24,6 @@ const WORKER_CODE = `
 
         // Register GSAP plugins
         gsap.registerPlugin(ScrollTrigger, SplitText);
-
-        // ============================================
-        // PREVENT SCROLLING UNTIL LOADED
-        // ============================================
-        document.body.style.overflow = 'hidden';
-        document.documentElement.style.overflow = 'hidden';
 
         // ============================================
         // MAIN APP
@@ -62,12 +41,8 @@ const WORKER_CODE = `
             document.getElementById('title3')
         ];
 
-        // HIDE TEXT INITIALLY TO PREVENT FLASH
-        titles.forEach(title => {
-            if (title) {
-                gsap.set(title, { opacity: 0 });
-            }
-        });
+        // DISABLE SCROLLING DURING LOAD
+        document.body.style.overflow = 'hidden';
 
         // Frame configuration
         let images = [];
@@ -85,11 +60,11 @@ const WORKER_CODE = `
             const wasDesktop = isDesktop;
             isDesktop = window.innerWidth >= 1024;
             if (wasDesktop !== isDesktop) {
+                // Reload frames if device type changed
                 location.reload();
             }
         });
 
-        // Generate frame URLs helper
         function generateFrames(urlTemplate, count, startIndex = 0) {
             const urls = [];
             for (let i = startIndex; i < startIndex + count; i++) {
@@ -99,7 +74,6 @@ const WORKER_CODE = `
             return urls;
         }
 
-        // Get appropriate frames based on device
         const desktopFrames = generateFrames(
             "https://terminal-industries-clone.vercel.app/assets/images/hero-desktop-webp/HERO_{index}.webp",
             301,
@@ -115,49 +89,38 @@ const WORKER_CODE = `
         const frameURLs = isDesktop ? desktopFrames : mobileFrames;
         const FRAME_COUNT = frameURLs.length;
 
-        // Initialize Web Worker
-        const blob = new Blob([WORKER_CODE], { type: 'application/javascript' });
-        const worker = new Worker(URL.createObjectURL(blob));
-
-        // Update loading text with progress
-        function updateLoadingProgress(loaded, total) {
+        // UPDATE LOADING TEXT WITH COUNTER
+        function updateLoadingText(loaded, total) {
             const percentage = Math.round((loaded / total) * 100);
             loading.textContent = `Loading frames... ${loaded}/${total} (${percentage}%)`;
         }
 
+        // Initialize Web Worker
+        const blob = new Blob([WORKER_CODE], { type: 'application/javascript' });
+        const worker = new Worker(URL.createObjectURL(blob));
+
         worker.onmessage = function(e) {
-            if (e.data.type === 'progress') {
-                // Update progress display
-                const { loaded, total } = e.data.payload;
-                updateLoadingProgress(loaded, total);
-            }
-            else if (e.data.type === 'blobs') {
+            if (e.data.type === 'blobs') {
                 const blobs = e.data.payload.blobs;
                 loadImages(blobs);
             }
         };
 
-        // Load images from blobs
+        // Load images from blobs with progress tracking
         async function loadImages(blobs) {
             let loadedCount = 0;
-            const totalImages = blobs.length;
+            const total = blobs.length;
             
+            updateLoadingText(0, total);
+
             const loadPromises = blobs.map((item, index) => {
                 return new Promise((resolve) => {
                     const img = new Image();
                     img.onload = () => {
                         images[index] = img;
                         loadedCount++;
-                        
-                        // Update loading text for image processing
-                        const percentage = Math.round((loadedCount / totalImages) * 100);
-                        loading.textContent = `Processing images... ${loadedCount}/${totalImages} (${percentage}%)`;
-                        
+                        updateLoadingText(loadedCount, total);
                         resolve();
-                    };
-                    img.onerror = () => {
-                        console.error(`Failed to load image ${index}`);
-                        resolve(); // Still resolve to not block other images
                     };
                     img.src = URL.createObjectURL(item.blob);
                 });
@@ -165,16 +128,18 @@ const WORKER_CODE = `
 
             await Promise.all(loadPromises);
             
+            // SCROLL TO TOP AFTER LOADING
+            window.scrollTo(0, 0);
+            
+            // RE-ENABLE SCROLLING
+            document.body.style.overflow = '';
+            
             // Hide loading with GSAP
             gsap.to(loading, {
                 opacity: 0,
                 duration: 0.5,
                 onComplete: () => {
                     loading.style.display = 'none';
-                    
-                    // RE-ENABLE SCROLLING AFTER LOAD
-                    document.body.style.overflow = '';
-                    document.documentElement.style.overflow = '';
                 }
             });
             
@@ -190,6 +155,9 @@ const WORKER_CODE = `
             type: 'frames',
             payload: { frames: frameURLs }
         });
+
+        // HIDE TEXT INITIALLY TO PREVENT FLASH
+        gsap.set(titles, { opacity: 0 });
 
         // Split text into characters using GSAP SplitText
         const titleSplits = titles.map(title => {
@@ -209,17 +177,12 @@ const WORKER_CODE = `
             }
         }
 
-        // Update text animation based on progress
+        // Update text animation based on progress - ADJUSTED TIMING
         function updateTextAnimation(progress) {
-            const textStartProgress = 0.1;
-            const textEndProgress = 0.9;
-            
-            const textProgress = Math.max(0, Math.min(1, 
-                (progress - textStartProgress) / (textEndProgress - textStartProgress)
-            ));
-            
-            const titleIndex = Math.floor(textProgress * 3);
-            const titleProgress = (textProgress * 3) - titleIndex;
+            // Adjust the offset to start earlier so animation completes before scroll ends
+            const adjustedProgress = Math.min(progress - 0.01, 0.99); // Start at 1% and cap at 99%
+            const titleIndex = Math.floor(adjustedProgress * 3);
+            const titleProgress = (adjustedProgress * 3) - titleIndex;
 
             // Reset all characters
             titleChars.forEach((chars, index) => {
@@ -243,9 +206,11 @@ const WORKER_CODE = `
                     const charRatio = i / chars.length;
                     const nextCharRatio = (i + 1) / chars.length;
                     
+                    // Fade in calculation
                     const fadeInCharProgress = (fadeInProgress - charRatio) / (nextCharRatio - charRatio);
                     const fadeInEased = gsap.parseEase('power2.out')(Math.max(0, Math.min(1, fadeInCharProgress)));
                     
+                    // Fade out calculation
                     const fadeOutCharProgress = (fadeOutProgress - charRatio) / (nextCharRatio - charRatio);
                     const fadeOutEased = gsap.parseEase('power2.in')(Math.max(0, Math.min(1, fadeOutCharProgress)));
                     
@@ -318,6 +283,7 @@ const WORKER_CODE = `
         }
 
         animateIndicator();
+
 
         // 2nd section 
         function animateTextOnScroll(targetSelector, triggerSelector, options = {}) {
