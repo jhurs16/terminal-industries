@@ -316,7 +316,7 @@ section.fullscreen-features__wrapper[data-items-count="1"][data-v-8ab42d30] {
     line-height: 1.2;
   }
    .bottom-layout .title__wrapper .title.animated-strong{
-    transform: translate(0, 30px)
+    transform: translate(0, 30px) !important;
   }
   .bottom-layout.layout-2 .content__wrapper[data-v-8ab42d30] {
     text-wrap: wrap;
