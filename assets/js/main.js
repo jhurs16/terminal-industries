@@ -145,7 +145,7 @@ const WORKER_CODE = `
             // Set initial visibility
             gsap.set('.homepage-scroll-content', { autoAlpha: 1 });
         }
-
+        loading.style.display = 'none';
         // Start loading frames
         worker.postMessage({
             type: 'frames',

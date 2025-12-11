@@ -1,0 +1,70 @@
+ .quote-block {
+     color: #fff;
+     margin: auto;
+     max-width: 53.25rem;
+     position: absolute;
+     text-align: center
+ }
+
+ .quote-text {
+     margin-bottom: 2.5rem
+ }
+
+ .quote-author {
+     align-items: center;
+     display: flex;
+     flex-direction: column;
+     margin-top: 1.5rem
+ }
+
+ .quote-image {
+     aspect-ratio: 1/1;
+     height: 98px;
+     -o-object-fit: cover;
+     object-fit: cover;
+     width: 98px
+ }
+
+ .author-info {
+     font-weight: 450;
+     line-height: 1.2
+ }
+
+ .role {
+     color: #05242433
+ }
+
+ .big-image-content {
+     align-items: center;
+     display: flex;
+     height: 100svh;
+     height: calc(var(--svh, 1svh)*100);
+     justify-content: center;
+     overflow: hidden;
+     position: relative;
+     width: 100%
+ }
+
+ .image-wrapper {
+     will-change: transform
+ }
+
+ .image,
+ .image-wrapper {
+     height: 100%;
+     width: 100%
+ }
+
+ .image {
+     -o-object-fit: cover;
+     object-fit: cover;
+     position: absolute
+ }
+
+ @media (max-width: 1023px) {
+     .quote-block {
+         max-width: 100%;
+         padding: 0 1.25rem;
+         text-wrap: balance
+     }
+ }

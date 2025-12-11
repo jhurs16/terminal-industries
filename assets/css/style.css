@@ -213,3 +213,52 @@
     #animated-text strong .--char {
         color: #d8d8d8;
     }
+    @keyframes color-transition-c9832f1a {
+    0% {
+        color: var(--c-light-light-gray)
+    }
+
+    30% {
+        color: var(--c-lime)
+    }
+
+    to {
+        color: var(--c-dark-green)
+    }
+}
+
+.content-wrapper {
+    position: relative
+}
+
+@media (min-width:768px) {
+     .features-grid {
+        padding-bottom: 6.25rem;
+        padding-top: 6.25rem
+    }
+}
+
+@media (max-width:1023px) {
+     .logo-grid-wrapper .logo-grid {
+        padding-top: 3.125rem
+    }
+}
+
+
+
+.solution-content p{
+    color: #052424;
+    font-size: 22px;
+    margin:0 220px;
+   
+}
+
+.solution-content ul {
+    color: #052424;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 100px;
+     column-gap: 20px;
+         font-size:  16px;
+}

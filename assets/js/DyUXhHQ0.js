@@ -1,0 +1,10 @@
+import {l as e} from "./DTbFyfnF.js";
+import {a as r} from "./DdpkdPkM.js";
+async function i(o) {
+    const {public: {storyblokVersion: s}} = e();
+    return await r(o, {
+        version: s,
+        resolve_relations: ["FormReference.form", "LinksList.sections"]
+    })
+}
+export {i as u};

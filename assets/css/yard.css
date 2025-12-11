@@ -320,3 +320,43 @@ section.white .heading__wrapper[data-v-15a59758] {
   }
 }
 
+/* Updated sizes for LOX letters */
+section .heading__wrapper h2 .anchor-heading .anchor-letter[data-v-15a59758] {
+  display: inline-block;
+  font-size: 10rem; /* Increased from 5.625rem */
+  letter-spacing: 0.5rem; /* Increased spacing */
+  opacity: 0;
+  transform-origin: center center;
+}
+
+@media (min-width: 1024px) {
+  section .heading__wrapper h2 .anchor-heading .anchor-letter[data-v-15a59758] {
+    font-size: 18rem; /* Increased from 11.25rem */
+    letter-spacing: 1rem; /* Increased spacing */
+  }
+  
+  .superscript[data-v-15a59758] {
+    font-size: 5rem; /* Increased from 3rem */
+    right: -1rem;
+    top: 1rem;
+    transform: translate(100%);
+  }
+}
+
+@media (min-width: 1280px) {
+  section .heading__wrapper h2 .anchor-heading .anchor-letter[data-v-15a59758] {
+    font-size: 20rem; /* Increased from 11.3125rem */
+    letter-spacing: 1.2rem;
+  }
+  
+  .superscript[data-v-15a59758] {
+    font-size: 6rem;
+    right: -1.2rem;
+    top: 1.5rem;
+  }
+}
+
+.yard-description{
+  padding: 90px 167px;
+  padding-top: 270px;
+}

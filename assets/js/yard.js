@@ -1,5 +1,4 @@
- 
-    // ============================================
+// ============================================
 // BACKGROUND CANVAS ANIMATION
 // ============================================
 
@@ -243,20 +242,20 @@ function destroyCanvas() {
 }
 
 // ============================================
-// YOS SCROLL ANIMATION
+// LOX SCROLL ANIMATION
 // ============================================
 
 gsap.registerPlugin(ScrollTrigger);
 
-const YOS_CONFIG = {
-  FULL_TEXT: "Yard Operating System.",
+const LOX_CONFIG = {
+  FULL_TEXT: "Logistic & Operational Excellence",
   SCROLL_THRESHOLD: 0.99,
   MOBILE_BREAKPOINT: 768
 };
 
-const yosState = {
+const loxState = {
   currentTheme: "green",
-  isDesktop: window.innerWidth >= YOS_CONFIG.MOBILE_BREAKPOINT,
+  isDesktop: window.innerWidth >= LOX_CONFIG.MOBILE_BREAKPOINT,
   letterPositions: [
     { from: {x:0, y:0, width:0, height:0}, to: {x:0, y:0, width:0, height:0} },
     { from: {x:0, y:0, width:0, height:0}, to: {x:0, y:0, width:0, height:0} },
@@ -270,12 +269,12 @@ const yosState = {
   originalLetterEls: []
 };
 
-function initYOSAnimation() {
-  yosState.container = document.getElementById('yos-section');
-  yosState.h2 = document.getElementById('main-heading');
-  yosState.animatedLetters = document.querySelectorAll('#animated-yos .anchor-letter');
-  yosState.targetLetters = document.querySelectorAll('.anchor-to .anchor-letter');
-  yosState.superscript = document.querySelector('#animated-yos .superscript');
+function initLOXAnimation() {
+  loxState.container = document.getElementById('yos-section');
+  loxState.h2 = document.getElementById('main-heading');
+  loxState.animatedLetters = document.querySelectorAll('#animated-yos .anchor-letter');
+  loxState.targetLetters = document.querySelectorAll('.anchor-to .anchor-letter');
+  loxState.superscript = document.querySelector('#animated-yos .superscript');
   
   buildHeading();
   
@@ -288,8 +287,8 @@ function initYOSAnimation() {
 }
 
 function buildHeading() {
-  const words = YOS_CONFIG.FULL_TEXT.split(" ");
-  yosState.h2.innerHTML = '';
+  const words = LOX_CONFIG.FULL_TEXT.split(" ");
+  loxState.h2.innerHTML = '';
   
   words.forEach((word, wordIdx) => {
     const wordWrapper = document.createElement('span');
@@ -308,33 +307,50 @@ function buildHeading() {
       wordWrapper.appendChild(space);
     }
     
-    yosState.h2.appendChild(wordWrapper);
+    loxState.h2.appendChild(wordWrapper);
   });
 }
 
 function calculatePositions() {
-  const wordWrappers = yosState.h2.querySelectorAll('.heading__word-wrapper');
-  yosState.originalLetterEls = [];
+  const wordWrappers = loxState.h2.querySelectorAll('.heading__word-wrapper');
+  loxState.originalLetterEls = [];
   
-  wordWrappers.forEach(wrapper => {
-    const firstLetter = wrapper.querySelector('span');
-    if (firstLetter) yosState.originalLetterEls.push(firstLetter);
-  });
+  // Get L from "LOGISTIC", O from "OPERATIONAL", X from "EXCELLENCE"
+  if (wordWrappers.length >= 4) {
+    // L from first word "LOGISTIC"
+    const firstLetter = wordWrappers[0].querySelector('span');
+    if (firstLetter) loxState.originalLetterEls.push(firstLetter);
+    
+    // O from third word "OPERATIONAL" (index 2, skip "&" which is index 1)
+    const thirdWord = wordWrappers[2];
+    if (thirdWord) {
+      const oLetter = thirdWord.querySelector('span');
+      if (oLetter) loxState.originalLetterEls.push(oLetter);
+    }
+    
+    // X from fourth word "EXCELLENCE" (index 3)
+    const fourthWord = wordWrappers[3];
+    if (fourthWord) {
+      const letters = fourthWord.querySelectorAll('span');
+      // X is the 2nd letter in EXCELLENCE (E-X-C-E-L-L-E-N-C-E)
+      if (letters[1]) loxState.originalLetterEls.push(letters[1]);
+    }
+  }
 
-  for (let i = 0; i < yosState.animatedLetters.length; i++) {
-    const original = yosState.originalLetterEls[i];
+  for (let i = 0; i < loxState.animatedLetters.length; i++) {
+    const original = loxState.originalLetterEls[i];
     if (!original) continue;
 
-    const target = yosState.targetLetters[i];
+    const target = loxState.targetLetters[i];
     const fromRect = original.getBoundingClientRect();
     const toRect = target.getBoundingClientRect();
 
-    yosState.letterPositions[i].from = fromRect;
-    yosState.letterPositions[i].to = toRect;
+    loxState.letterPositions[i].from = fromRect;
+    loxState.letterPositions[i].to = toRect;
 
-    const animated = yosState.animatedLetters[i];
+    const animated = loxState.animatedLetters[i];
     
-    if (yosState.currentTheme === 'green') {
+    if (loxState.currentTheme === 'green') {
       gsap.set(animated, {
         x: fromRect.x + fromRect.width * 0.5 - toRect.x - toRect.width * 0.5,
         y: fromRect.y + fromRect.height * 0.5 - toRect.y - toRect.height * 0.5,
@@ -343,35 +359,34 @@ function calculatePositions() {
     }
     
     animated.style.opacity = '1';
-    /* original.classList.add('hide'); */
-    if (yosState.isDesktop) {
+    if (loxState.isDesktop) {
       original.classList.add('hide');
     }
   }
 }
 
 function createScrollAnimation() {
-  const wordWrappers = yosState.h2.querySelectorAll('.heading__word-wrapper');
+  const wordWrappers = loxState.h2.querySelectorAll('.heading__word-wrapper');
   
   const timeline = gsap.timeline({
     scrollTrigger: {
-      trigger: yosState.container,
+      trigger: loxState.container,
       start: 'top top',
       end: '90% bottom',
       scrub: true,
       onUpdate: (self) => {
-        if (self.progress >= YOS_CONFIG.SCROLL_THRESHOLD && yosState.currentTheme !== 'white') {
-          yosState.currentTheme = 'white';
-          yosState.container.classList.remove('green');
-          yosState.container.classList.add('white');
-          yosState.superscript.classList.add('show');
+        if (self.progress >= LOX_CONFIG.SCROLL_THRESHOLD && loxState.currentTheme !== 'white') {
+          loxState.currentTheme = 'white';
+          loxState.container.classList.remove('green');
+          loxState.container.classList.add('white');
+          loxState.superscript.classList.add('show');
           setCanvasTheme('white');
           setCanvasMode('wave');
-        } else if (self.progress < YOS_CONFIG.SCROLL_THRESHOLD && yosState.currentTheme !== 'green') {
-          yosState.currentTheme = 'green';
-          yosState.container.classList.remove('white');
-          yosState.container.classList.add('green');
-          yosState.superscript.classList.remove('show');
+        } else if (self.progress < LOX_CONFIG.SCROLL_THRESHOLD && loxState.currentTheme !== 'green') {
+          loxState.currentTheme = 'green';
+          loxState.container.classList.remove('white');
+          loxState.container.classList.add('green');
+          loxState.superscript.classList.remove('show');
           setCanvasTheme('green');
           setCanvasMode('pulse');
         }
@@ -390,10 +405,10 @@ function createScrollAnimation() {
     );
   });
 
-  // Phase 2: Animate YOS letters
-  if (yosState.isDesktop) {
-    yosState.letterPositions.forEach((pos, i) => {
-      const animated = yosState.animatedLetters[i];
+  // Phase 2: Animate LOX letters
+  if (loxState.isDesktop) {
+    loxState.letterPositions.forEach((pos, i) => {
+      const animated = loxState.animatedLetters[i];
       const { from, to } = pos;
       
       timeline.fromTo(
@@ -414,26 +429,26 @@ function createScrollAnimation() {
       );
     });
   } else {
-    yosState.animatedLetters.forEach(letter => {
+    loxState.animatedLetters.forEach(letter => {
       gsap.set(letter, { x: 0, y: 0, scale: 1 });
     });
     
     timeline.fromTo(
-      yosState.animatedLetters,
+      loxState.animatedLetters,
       { opacity: 0 },
       { opacity: 1, duration: 0.4, stagger: 0.1 },
       1
     );
     
-    timeline.to(yosState.animatedLetters, { duration: 0.4 });
+    timeline.to(loxState.animatedLetters, { duration: 0.4 });
   }
 }
 
 function handleResize() {
-  const wasDesktop = yosState.isDesktop;
-  yosState.isDesktop = window.innerWidth >= YOS_CONFIG.MOBILE_BREAKPOINT;
+  const wasDesktop = loxState.isDesktop;
+  loxState.isDesktop = window.innerWidth >= LOX_CONFIG.MOBILE_BREAKPOINT;
   
-  if (wasDesktop !== yosState.isDesktop) {
+  if (wasDesktop !== loxState.isDesktop) {
     ScrollTrigger.getAll().forEach(st => st.kill());
     calculatePositions();
     createScrollAnimation();
@@ -446,7 +461,7 @@ function handleResize() {
 
 function init() {
   initBackgroundCanvas('main-canvas', 'bg-canvas');
-  initYOSAnimation();
+  initLOXAnimation();
   window.addEventListener('resize', handleResize);
 }
 
@@ -455,4 +470,3 @@ window.addEventListener('load', init);
 if (document.readyState === 'complete') {
   init();
 }
- 
