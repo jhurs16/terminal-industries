@@ -1,0 +1,1 @@
+import{B as a,C as c,c as r,o as e,F as s,k as i,d as k,r as u}from"./DTbFyfnF.js";const p={__name:"StoryblokPage",props:{blok:{type:Object,required:!0}},setup(t){return(b,d)=>{const n=u("StoryblokComponent"),l=c("editable");return a((e(),r("div",null,[(e(!0),r(s,null,i(t.blok.body,o=>(e(),k(n,{key:o._uid,blok:o},null,8,["blok"]))),128))])),[[l,t.blok]])}}};export{p as default};

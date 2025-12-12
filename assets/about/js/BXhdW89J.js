@@ -1,0 +1,1 @@
+import{aj as r,L as n,ab as u,g as c,a3 as f}from"./DTbFyfnF.js";const d=e=>{const a=r();n(()=>{const t=u();if(a.animate){e();return}const s=c(!1);f(()=>a.animate,o=>{o&&!s.value&&t.run(()=>{e(),s.value=!0})})})};export{d as u};

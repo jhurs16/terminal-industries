@@ -1,0 +1,1 @@
+import{L as a,am as c,a$ as r,ab as i}from"./DTbFyfnF.js";const u=(...o)=>a(()=>{const t=c();let e;const s=(...p)=>{e&&e.stop(),e=i(),e.run(()=>{o[0](...p)})};t.add(s,o[1],o[2],!0),r(()=>{e.stop(),t.remove(s)})});export{u};
