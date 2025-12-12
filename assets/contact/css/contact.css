@@ -1960,28 +1960,28 @@ svg {
 
 @font-face {
     font-family: 'SuisseIntl-Regular';
-    src: url('../assets/fonts/SuisseIntl-Regular.woff2') format('woff2');
+    src: url('../../fonts/SuisseIntl-Regular.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'SuisseIntl-Medium';
-    src: url('../assets/fonts/SuisseIntl-Medium.woff2') format('woff2');
+    src: url('../../fonts/SuisseIntl-Medium.woff2') format('woff2');
     font-weight: 500;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'SuisseIntl-SemiBold';
-    src: url('../assets/fonts/SuisseIntl-Semibold.woff2') format('woff2');
+    src: url('../../fonts/SuisseIntl-Semibold.woff2') format('woff2');
     font-weight: 600;
     font-style: normal;
 }
 
 @font-face {
     font-family: 'GeistMono-SemiBold';
-    src: url('../assets/fonts/GeistMono-SemiBold.woff2') format('woff2');
+    src: url('../../fonts/GeistMono-SemiBold.woff2') format('woff2');
     font-weight: 600;
     font-style: normal;
 }
