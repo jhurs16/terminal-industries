@@ -1,0 +1,35 @@
+@keyframes color-transition-4bb7e02d {
+  0% {
+    color:var(--c-light-light-gray)
+  }
+  30% {
+    color:var(--c-lime)
+  }
+  to {
+    color:var(--c-dark-green)
+  }
+}
+.media-wrapper {
+  height:100%;
+  overflow:hidden;
+  width:100%
+}
+.media-wrapper .video,
+.media-wrapper img {
+  height:100%;
+  -o-object-fit:cover;
+  object-fit:cover;
+  -o-object-position:center;
+  object-position:center;
+  width:100%
+}
+@media (min-width:1024px) {
+  .mb {
+    display:none
+  }
+}
+@media (max-width:1023px) {
+  .lg.has-mb-asset {
+    display:none
+  }
+}
