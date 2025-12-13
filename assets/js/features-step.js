@@ -26,6 +26,45 @@ function generateNotchPath(width, height, notchConfig) {
     return path.trim().replace(/\s+/g, ' ');
 }
 
+function updateNotchClipPath(progress) {
+  const NOTCH_SIZE = 0.4; // Height of the notch (40% of container)
+  const NOTCH_DEPTH = 0.05; // How far it cuts in (5% of width)
+  const RADIUS = 0.03; // Corner radius
+  
+  // Calculate notch position (moves from top to bottom)
+  const position = gsap.utils.interpolate(
+    NOTCH_SIZE / 2 + 0.1,
+    1 - NOTCH_SIZE / 2 - 0.1,
+    progress
+  );
+  
+  const notchStart = position - NOTCH_SIZE / 2;
+  const notchEnd = position + NOTCH_SIZE / 2;
+  
+  // Create the clip path (normalized 0-1 coordinates)
+  const path = `
+    M 0 0
+    L ${1 - RADIUS} 0
+    Q 1 0 1 ${RADIUS}
+    L 1 ${1 - RADIUS}
+    Q 1 1 ${1 - RADIUS} 1
+    L ${RADIUS} 1
+    Q 0 1 0 ${1 - RADIUS}
+    L 0 ${notchEnd + RADIUS}
+    Q 0 ${notchEnd} ${RADIUS} ${notchEnd}
+    L ${NOTCH_DEPTH - RADIUS} ${notchEnd}
+    Q ${NOTCH_DEPTH} ${notchEnd} ${NOTCH_DEPTH} ${notchEnd - RADIUS}
+    L ${NOTCH_DEPTH} ${notchStart + RADIUS}
+    Q ${NOTCH_DEPTH} ${notchStart} ${NOTCH_DEPTH - RADIUS} ${notchStart}
+    L ${RADIUS} ${notchStart}
+    Q 0 ${notchStart} 0 ${notchStart - RADIUS}
+    Z
+  `;
+  
+  document.getElementById('notchClipPath').setAttribute('d', path.trim());
+}
+
+
 function updateSVGMask(svgElement, width, height, notchConfig) {
     svgElement.setAttribute('width', width);
     svgElement.setAttribute('height', height);
@@ -259,6 +298,7 @@ function updateSVGMask(svgElement, width, height, notchConfig) {
                 onUpdate: (self) => {
                     const progress = self.progress;
                     notchConfig.position = 0.3 + (progress * 0.4);
+                    updateNotchClipPath(self.progress);
 
                     if (elements.svgElement && elements.svgMask) {
                         updateSVGMask(
@@ -272,6 +312,7 @@ function updateSVGMask(svgElement, width, height, notchConfig) {
             });
         }
     }
+    updateNotchClipPath(0.5);
 
     // ===== MOBILE SCROLL =====
     function handleMobileScroll() {

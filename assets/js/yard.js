@@ -1,7 +1,3 @@
-  // ============================================
-// BACKGROUND CANVAS ANIMATION
-// ============================================
-
 // Configuration
 const GRID_CONFIG = {
   DOT_SIZE: 3,
@@ -315,8 +311,9 @@ function calculatePositions() {
   const wordWrappers = yosState.h2.querySelectorAll('.heading__word-wrapper');
   yosState.originalLetterEls = [];
   
+  // Get the first letter span from each word wrapper (G, F, T)
   wordWrappers.forEach(wrapper => {
-    const firstLetter = wrapper.querySelector('span');
+    const firstLetter = wrapper.querySelector('span:first-child');
     if (firstLetter) yosState.originalLetterEls.push(firstLetter);
   });
 
@@ -328,21 +325,32 @@ function calculatePositions() {
     const fromRect = original.getBoundingClientRect();
     const toRect = target.getBoundingClientRect();
 
-    yosState.letterPositions[i].from = fromRect;
-    yosState.letterPositions[i].to = toRect;
+    yosState.letterPositions[i].from = {
+      x: fromRect.x,
+      y: fromRect.y,
+      width: fromRect.width,
+      height: fromRect.height
+    };
+    yosState.letterPositions[i].to = {
+      x: toRect.x,
+      y: toRect.y,
+      width: toRect.width,
+      height: toRect.height
+    };
 
     const animated = yosState.animatedLetters[i];
-    
-    if (yosState.currentTheme === 'green') {
-      gsap.set(animated, {
-        x: fromRect.x + fromRect.width * 0.5 - toRect.x - toRect.width * 0.5,
-        y: fromRect.y + fromRect.height * 0.5 - toRect.y - toRect.height * 0.5,
-        scale: fromRect.height / toRect.height
-      });
-    }
-    
+
+  if (yosState.currentTheme === 'green') {
+    // Use the SAME formula as in createScrollAnimation
+    gsap.set(animated, {
+      x: fromRect.x + fromRect.width * 0.5 - toRect.x - toRect.width * 0.5,
+      y: fromRect.y + fromRect.height * 0.5 - toRect.y - toRect.height * 0.5,
+      scale: fromRect.height / toRect.height
+    });
+  }
+      
     animated.style.opacity = '1';
-    /* original.classList.add('hide'); */
+    
     if (yosState.isDesktop) {
       original.classList.add('hide');
     }

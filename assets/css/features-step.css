@@ -437,3 +437,28 @@
     height: var(--digit-height);
     text-align: center
 }
+
+/* #features-step-vids {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: 8px;
+  overflow: visible;
+  background: #000;
+  clip-path: url(#imageNotchClip);
+} */
+.images{
+    overflow: visible;
+  background: #000;
+  clip-path: url(#imageNotchClip);
+}
+.images .notch-clip {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+@media (max-width: 1023px) {
+  .images {
+    clip-path: none;
+  }
+}

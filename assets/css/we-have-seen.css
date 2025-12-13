@@ -68,3 +68,17 @@
          text-wrap: balance
      }
  }
+ /* --d27fb6da: url(#clip-v-0-0-0-0-8-0);
+  --b18bdda2: url(#mask-v-0-0-0-0-8-0);
+} */
+
+ svg[data-v-a9452b3a]{
+    clip-path: url(#clip-v-0-0-0-0-8-0);
+ }
+
+.slot:not(.ssr).use-clip[data-v-a9452b3a] {
+  clip-path: var(--d27fb6da);
+}
+.slot[data-v-a9452b3a] {
+  overflow: clip;
+}
