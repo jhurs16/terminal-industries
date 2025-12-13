@@ -188,7 +188,7 @@
         /* font-size: clamp(32px, 6vw, 72px); */
         font-size: max(4.375rem,min(4.688vw,120px));
         line-height: 1.2;
-        font-weight: 400;
+        font-weight: 500;
         max-width:  750px;
         text-align: center;
         margin: 0 auto;
