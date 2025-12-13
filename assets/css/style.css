@@ -194,8 +194,9 @@
         margin: 0 auto;
         color: #052424;
         word-wrap: normal;
+        letter-spacing:min(-.141vw,-3.6px)
     }
-    
+   
     #animated-text .word {
         display: inline-block;
         margin-right: 0.3em;
